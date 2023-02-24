@@ -122,8 +122,10 @@ def create_connectedk8s(cmd, client, resource_group_name, cluster_name, correlat
         config_dp_endpoint, release_train_custom = validate_env_file_dogfood(values_file, values_file_provided)
     # Get the values or endpoints required for retreiving the Helm registry URL.
     # TODO: main changes for on-premise, but these endpoints currently don't exist.
-    elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
-        config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+    # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
+    #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+    # TODO: Remove hardcode.
+    config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
 
     # Loading the kubeconfig file in kubernetes client configuration
     load_kube_config(kube_config, kube_context)
@@ -289,19 +291,21 @@ def create_connectedk8s(cmd, client, resource_group_name, cluster_name, correlat
     if os.getenv('HELMREPONAME') and os.getenv('HELMREPOURL'):
         utils.add_helm_repo(kube_config, kube_context, helm_client_location)
 
-    config_dp_endpoint = None
     # Get the default config dataplane endpoint.
     if config_dp_endpoint is None:
         config_dp_endpoint = get_config_dp_endpoint(cmd, location)
 
     # Retrieving Helm chart OCI Artifact location
     registry_path = os.getenv('HELMREGISTRY') if os.getenv('HELMREGISTRY') else utils.get_helm_registry(cmd, config_dp_endpoint, release_train_custom)
+    print("Registry path: {}".format(registry_path))
+    
     # Get azure-arc agent version for telemetry
     azure_arc_agent_version = registry_path.split(':')[1]
     telemetry.add_extension_event('connectedk8s', {'Context.Default.AzureCLI.AgentVersion': azure_arc_agent_version})
 
     # Get helm chart path
     chart_path = utils.get_chart_path(registry_path, kube_config, kube_context, helm_client_location)
+    print("Chart path: {}".format(chart_path))
 
     # Generate public-private key pair
     try:
@@ -333,7 +337,7 @@ def create_connectedk8s(cmd, client, resource_group_name, cluster_name, correlat
     enable_custom_locations, custom_locations_oid = check_cl_registration_and_get_oid(cmd, cl_oid)
 
     # Install azure-arc agents
-    utils.helm_install_release(chart_path, subscription_id, kubernetes_distro, kubernetes_infra, resource_group_name, cluster_name,
+    utils.helm_install_release(chart_path, azure_arc_agent_version, subscription_id, kubernetes_distro, kubernetes_infra, resource_group_name, cluster_name,
                                location, onboarding_tenant_id, http_proxy, https_proxy, no_proxy, proxy_cert, private_key_pem, kube_config,
                                kube_context, no_wait, values_file_provided, values_file, environment_name, disable_auto_upgrade, enable_custom_locations,
                                custom_locations_oid, helm_client_location, enable_private_link, onboarding_timeout)
@@ -953,8 +957,10 @@ def update_connected_cluster(cmd, client, resource_group_name, cluster_name, htt
         config_dp_endpoint, release_train_custom = validate_env_file_dogfood(values_file, values_file_provided)
     # Get set the values or endpoints required for retreiving the Helm registry URL.
     # TODO: endpoint may not be named like this.
-    elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
-        config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+    # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
+    #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+
+    config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
 
     # Loading the kubeconfig file in kubernetes client configuration
     load_kube_config(kube_config, kube_context)
@@ -1002,7 +1008,6 @@ def update_connected_cluster(cmd, client, resource_group_name, cluster_name, htt
     if os.getenv('HELMREPONAME') and os.getenv('HELMREPOURL'):
         utils.add_helm_repo(kube_config, kube_context, helm_client_location)
 
-    config_dp_endpoint = None
     # Get the default config dataplane endpoint.
     if config_dp_endpoint is None:
         config_dp_endpoint = get_config_dp_endpoint(cmd, connected_cluster.location)
@@ -1041,8 +1046,7 @@ def update_connected_cluster(cmd, client, resource_group_name, cluster_name, htt
             raise CLIInternalError(str.format(consts.Update_Agent_Failure, error_helm_get_values.decode("ascii")))
 
     cmd_helm_upgrade = [helm_client_location, "upgrade", "azure-arc", chart_path, "--namespace", release_namespace,
-                        "-f",
-                        user_values_location, "--wait", "--output", "json"]
+                        "-f", user_values_location, "--wait", "--output", "json"]
     if values_file_provided:
         cmd_helm_upgrade.extend(["-f", values_file])
     if auto_upgrade is not None:
@@ -1103,8 +1107,10 @@ def upgrade_agents(cmd, client, resource_group_name, cluster_name, kube_config=N
         config_dp_endpoint, release_train_custom = validate_env_file_dogfood(values_file, values_file_provided)
     # Get set the values or endpoints required for retreiving the Helm registry URL.
     # TODO: endpoint may not be named like this.
-    elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
-        config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+    # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
+    #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+
+    config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
 
     # Loading the kubeconfig file in kubernetes client configuration
     load_kube_config(kube_config, kube_context)
@@ -1191,7 +1197,6 @@ def upgrade_agents(cmd, client, resource_group_name, cluster_name, kube_config=N
     if os.getenv('HELMREPONAME') and os.getenv('HELMREPOURL'):
         utils.add_helm_repo(kube_config, kube_context, helm_client_location)
 
-    config_dp_endpoint = None
     # Get the default config dataplane endpoint.
     if config_dp_endpoint is None:
         config_dp_endpoint = get_config_dp_endpoint(cmd, connected_cluster.location)
@@ -1393,8 +1398,10 @@ def enable_features(cmd, client, resource_group_name, cluster_name, features, ku
         config_dp_endpoint, release_train_custom = validate_env_file_dogfood(values_file, values_file_provided)
     # Get set the values or endpoints required for retreiving the Helm registry URL.
     # TODO: endpoint may not be named like this.
-    elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
-        config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+    # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
+    #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+
+    config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
 
     # Loading the kubeconfig file in kubernetes client configuration
     load_kube_config(kube_config, kube_context)
@@ -1443,8 +1450,6 @@ def enable_features(cmd, client, resource_group_name, cluster_name, features, ku
     if os.getenv('HELMREPONAME') and os.getenv('HELMREPOURL'):
         utils.add_helm_repo(kube_config, kube_context, helm_client_location)
 
-
-    config_dp_endpoint = None
     # Get the default config dataplane endpoint.
     if config_dp_endpoint is None:
         config_dp_endpoint = get_config_dp_endpoint(cmd, connected_cluster.location)
@@ -1522,8 +1527,10 @@ def disable_features(cmd, client, resource_group_name, cluster_name, features, k
         config_dp_endpoint, release_train_custom = validate_env_file_dogfood(values_file, values_file_provided)
     # Get set the values or endpoints required for retreiving the Helm registry URL.
     # TODO: endpoint may not be named like this.
-    elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
-        config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+    # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
+    #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+
+    config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
 
     # Loading the kubeconfig file in kubernetes client configuration
     load_kube_config(kube_config, kube_context)
@@ -2338,14 +2345,15 @@ def troubleshoot(cmd, client, resource_group_name, cluster_name, kube_config=Non
                 config_dp_endpoint, release_train_custom = validate_env_file_dogfood(values_file, values_file_provided)
             # Get set the values or endpoints required for retreiving the Helm registry URL.
             # TODO: endpoint may not be named like this.
-            elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
-                config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+            # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
+            #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
+
+            config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
 
             # Adding helm repo
             if os.getenv('HELMREPONAME') and os.getenv('HELMREPOURL'):
                 utils.add_helm_repo(kube_config, kube_context, helm_client_location)
 
-            config_dp_endpoint = None
             # Get the default config dataplane endpoint.
             if config_dp_endpoint is None:
                 config_dp_endpoint = get_config_dp_endpoint(cmd, connected_cluster.location)
