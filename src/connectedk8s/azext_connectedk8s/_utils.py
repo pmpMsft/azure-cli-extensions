@@ -310,6 +310,8 @@ def helm_install_release(chart_path, azure_arc_agent_version, subscription_id, k
                         "--set", "systemDefaultValues.clusterconnect-agent.enabled=true",
                         "--output", "json"]
 
+    # TODO: addd check to see if current environment is on-premise.
+    # START: on-premise modification
     resource_manager = "https://resourcemanagerweb.azs:40007/"
     notification_endpoint = "http://notificationsapi.gnsdp.azs:4909/"
     config_endpoint = "https://configwebdp.configrp.azs:4914"
@@ -343,6 +345,7 @@ def helm_install_release(chart_path, azure_arc_agent_version, subscription_id, k
             "--set", "systemDefaultValues.debugLogging=true"
         ]
     )
+    # END: on-premise modification
 
     # Add custom-locations related params
     if enable_custom_locations and not enable_private_link:
