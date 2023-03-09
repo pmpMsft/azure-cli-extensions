@@ -309,7 +309,8 @@ def helm_install_release(chart_path, azure_arc_agent_version, subscription_id, k
                         "--set", "global.azureEnvironment={}".format(environment_name),
                         "--set", "systemDefaultValues.clusterconnect-agent.enabled=true",
                         "--output", "json"]
-
+    azure_arc_agent_version = "0.0.4"
+    print(f"using azure_arc_agent_version version: {azure_arc_agent_version}")
     # TODO: addd check to see if current environment is on-premise.
     # START: on-premise modification
     resource_manager = "https://resourcemanagerweb.azs:40007/"
