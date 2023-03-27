@@ -312,14 +312,15 @@ def helm_install_release(chart_path, azure_arc_agent_version, subscription_id, k
     
     # START: on-premise modification
     # TODO: add check to see if current environment is on-premise.
-    azure_arc_agent_version = "0.0.4"
+    azure_arc_agent_version = "0.0.0.5"
     print(f"using azure_arc_agent_version version: {azure_arc_agent_version}")
     # TODO: remove hardcoded urls and use metadata_endpoints dictionary to get the values after endpoints are available.
     resource_manager = "https://resourcemanagerweb.azs:40007/"
-    notification_endpoint = "http://notificationsapi.gnsdp.azs:4909/"
-    config_endpoint = "https://configwebdp.configrp.azs:4914"
+    notification_endpoint = "https://guestnotificationservice.azs.microsoft.com/"
+    config_endpoint = "https://autonomous.dp.kubernetesconfiguration.azs.microsoft.com"
     his_endpoint = "https://his.devfabric.azs.microsoft.com"
     relay_endpoint = ".servicebus.azs.microsoft.com"
+    active_directory = "https://login.devfabric.azs.microsoft.com/"
 
     cmd_helm_install.extend(
         [ 
@@ -327,6 +328,7 @@ def helm_install_release(chart_path, azure_arc_agent_version, subscription_id, k
             "--set", "systemDefaultValues.image.releaseName=agent",
             "--set", "systemDefaultValues.customIdentityProviderEnabled=true",
             "--set", "systemDefaultValues.azureResourceManagerEndpoint={}".format(resource_manager),
+            "--set", "systemDefaultValues.activeDirectoryEndpoint={}".format(active_directory),
             "--set", "systemDefaultValues.azureArcAgents.config_dp_endpoint_override={}".format(config_endpoint),
             "--set", "systemDefaultValues.clusterconnect-agent.notification_dp_endpoint_override={}".format(notification_endpoint),
             "--set", "systemDefaultValues.clusterconnect-agent.relay_endpoint_suffix_override={}".format(relay_endpoint),
