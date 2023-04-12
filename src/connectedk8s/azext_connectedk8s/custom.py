@@ -125,7 +125,7 @@ def create_connectedk8s(cmd, client, resource_group_name, cluster_name, correlat
     # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
     #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
     # TODO: Remove hardcode.
-    config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
+    config_dp_endpoint = "https://devfabric.dp.kubernetesconfiguration.azs.microsoft.com"
 
     # Loading the kubeconfig file in kubernetes client configuration
     load_kube_config(kube_config, kube_context)
@@ -960,7 +960,7 @@ def update_connected_cluster(cmd, client, resource_group_name, cluster_name, htt
     # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
     #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
 
-    config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
+    config_dp_endpoint = "https://devfabric.dp.kubernetesconfiguration.azs.microsoft.com"
 
     # Loading the kubeconfig file in kubernetes client configuration
     load_kube_config(kube_config, kube_context)
@@ -1110,7 +1110,7 @@ def upgrade_agents(cmd, client, resource_group_name, cluster_name, kube_config=N
     # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
     #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
 
-    config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
+    config_dp_endpoint = "https://devfabric.dp.kubernetesconfiguration.azs.microsoft.com"
 
     # Loading the kubeconfig file in kubernetes client configuration
     load_kube_config(kube_config, kube_context)
@@ -1401,7 +1401,7 @@ def enable_features(cmd, client, resource_group_name, cluster_name, features, ku
     # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
     #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
 
-    config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
+    config_dp_endpoint = "https://devfabric.dp.kubernetesconfiguration.azs.microsoft.com"
 
     # Loading the kubeconfig file in kubernetes client configuration
     load_kube_config(kube_config, kube_context)
@@ -1530,7 +1530,7 @@ def disable_features(cmd, client, resource_group_name, cluster_name, features, k
     # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
     #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
 
-    config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
+    config_dp_endpoint = "https://devfabric.dp.kubernetesconfiguration.azs.microsoft.com"
 
     # Loading the kubeconfig file in kubernetes client configuration
     load_kube_config(kube_config, kube_context)
@@ -2348,7 +2348,7 @@ def troubleshoot(cmd, client, resource_group_name, cluster_name, kube_config=Non
             # elif hasattr(cmd.cli_ctx.cloud.endpoints, 'dataplane_endpoints'):
             #     config_dp_endpoint = cmd.cli_ctx.cloud.endpoints.dataplane_endpoints.arcConfigEndpoint
 
-            config_dp_endpoint = "https://configwebdp.configrp.azs:4914"
+            config_dp_endpoint = "https://devfabric.dp.kubernetesconfiguration.azs.microsoft.com"
 
             # Adding helm repo
             if os.getenv('HELMREPONAME') and os.getenv('HELMREPOURL'):
