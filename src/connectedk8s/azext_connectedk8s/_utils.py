@@ -317,8 +317,8 @@ def helm_install_release(chart_path, azure_arc_agent_version, subscription_id, k
     # TODO: remove hardcoded urls and use metadata_endpoints dictionary to get the values after endpoints are available.
     resource_manager = "https://resourcemanagerweb.azs:40007/"
     notification_endpoint = "https://guestnotificationservice.azs.microsoft.com/"
-    config_endpoint = "https://autonomous.dp.kubernetesconfiguration.azs.microsoft.com"
-    his_endpoint = "https://his.devfabric.azs.microsoft.com"
+    config_endpoint = "https://devfabric.dp.kubernetesconfiguration.azs.microsoft.com"
+    his_endpoint = "https://his.azs.microsoft.com"
     relay_endpoint = ".servicebus.azs.microsoft.com"
     active_directory = "https://login.devfabric.azs.microsoft.com/"
 
